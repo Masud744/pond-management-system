@@ -1,48 +1,79 @@
 #ifndef WIFI_MANAGER_H
 #define WIFI_MANAGER_H
 
-// SmartProv macros — #include এর আগে থাকতে হবে
-#define SP_AP_PREFIX "POND-BOAT"
-#define SP_LED_PIN 2
-#define SP_RESET_PIN 0
-#define SP_RESET_HOLD_MS 3000
-#define SP_RESTART_DELAY_MS 2000
+#include <WiFi.h>
+#include "config.h"
 
-#include <SmartProv.h>
-
-SmartProv prov;
-
+// ─────────────────────────────
+// WiFi Setup
+// ─────────────────────────────
 void wifiSetup()
 {
-  Serial.println("[WIFI] Starting SmartProv...");
+    Serial.println("[WIFI] Connecting to: " + String(WIFI_SSID));
 
-  prov.addField("backend_url", "Backend URL", "https://your-app.onrender.com");
+    WiFi.mode(WIFI_STA);
+    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
-  prov.onConnected([]()
-                   {
-    Serial.println("[WIFI] Connected!");
-    Serial.println("[WIFI] IP: " + prov.getIP().toString());
-    Serial.println("[WIFI] Backend: " + prov.getField("backend_url")); });
+    int attempts = 0;
+    while (WiFi.status() != WL_CONNECTED && attempts < 30)
+    {
+        delay(500);
+        Serial.print(".");
+        attempts++;
+    }
 
-  prov.begin();
+    if (WiFi.status() == WL_CONNECTED)
+    {
+        Serial.println();
+        Serial.println("================================");
+        Serial.println("[WIFI] Connected Successfully!");
+        Serial.println("[WIFI] IP  : " + WiFi.localIP().toString());
+        Serial.println("[WIFI] RSSI: " + String(WiFi.RSSI()) + " dBm");
+        Serial.println("[WIFI] MAC : " + WiFi.macAddress());
+        Serial.println("================================");
+    }
+    else
+    {
+        Serial.println();
+        Serial.println("[WIFI] Failed! Check SSID/Password in config.h");
+    }
 }
 
+// ─────────────────────────────
+// WiFi Loop Handler
+// (auto-reconnect)
+// ─────────────────────────────
 void wifiHandle()
 {
-  prov.update();
+    static unsigned long lastCheck = 0;
+
+    if (millis() - lastCheck < 10000)
+        return;
+
+    lastCheck = millis();
+
+    if (WiFi.status() != WL_CONNECTED)
+    {
+        Serial.println("[WIFI] Disconnected! Reconnecting...");
+        WiFi.disconnect();
+        WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+    }
 }
 
+// ─────────────────────────────
+// WiFi Connection Status
+// ─────────────────────────────
 bool isWifiConnected()
 {
-  return prov.isConnected();
+    return WiFi.status() == WL_CONNECTED;
 }
 
+// ─────────────────────────────
+// Get Backend URL
+// ─────────────────────────────
 String getBackendURL()
 {
-  String url = prov.getField("backend_url");
-  if (url == "")
-    return "https://your-app.onrender.com";
-  return url;
+    return String(BACKEND_URL);
 }
 
 #endif

@@ -1,6 +1,13 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+// ── WiFi Credentials ──
+#define WIFI_SSID "BDU-Hostel2"
+#define WIFI_PASSWORD "dhaka1213"
+
+// ── Backend ──
+#define BACKEND_URL "http://10.0.21.218:8000/api/sensor"
+
 // ── Motor Pins ──
 #define IN1 27
 #define IN2 26
@@ -14,9 +21,9 @@
 
 // ── Servo ──
 #define SERVO_PIN 18
-#define SERVO_REST 0         // বন্ধ অবস্থা
-#define SERVO_FEED 90        // খাবার দেওয়ার অবস্থা
-#define SERVO_FEED_TIME 2000 // ২ সেকেন্ড খোলা থাকবে
+#define SERVO_REST 0
+#define SERVO_FEED 90
+#define SERVO_FEED_TIME 2000
 
 // ── Sensors ──
 #define TEMP_PIN 4
@@ -24,14 +31,12 @@
 #define PH_PIN 35
 
 // ── pH Calibration ──
-// Buffer solution দিয়ে calibrate করার পর এই values বদলাও
-#define PH_CAL_VOLTAGE_4 2.90 // pH 4 buffer এ measured voltage
-#define PH_CAL_VOLTAGE_7 2.50 // pH 7 buffer এ measured voltage
+#define PH_CAL_VOLTAGE_4 2.90
+#define PH_CAL_VOLTAGE_7 2.50
 
 // ── Turbidity Calibration ──
-// Clear water আর dirty water এ ADC value measure করে বসাও
-#define TURB_CLEAR_RAW 3500 // পরিষ্কার পানিতে ADC value
-#define TURB_DIRTY_RAW 1500 // ঘোলা পানিতে ADC value
+#define TURB_CLEAR_RAW 3500
+#define TURB_DIRTY_RAW 1500
 
 // ── Water Quality Thresholds ──
 #define PH_GOOD_MIN 6.5
